@@ -1,7 +1,10 @@
 package com.app;
 
+import com.app.controller.ReflectionController;
+import com.app.model.Person;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hola mundo!");
+        ReflectionController.INSTANCE.init("{}", Person.class);
     }
 }
