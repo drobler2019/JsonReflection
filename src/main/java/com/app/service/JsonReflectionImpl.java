@@ -18,7 +18,7 @@ public class JsonReflectionImpl implements JsonReflectionInterface {
                     .filter(constructor -> constructor.getParameterCount() == 0)
                     .findFirst();
             if (optionalConstructor.isEmpty()) {
-                return (T) constructors[0].newInstance();
+                throw new IllegalArgumentException("Constructor vacio no encontrado");
             }
             T instance = (T) optionalConstructor.get().newInstance();
             return instance;
