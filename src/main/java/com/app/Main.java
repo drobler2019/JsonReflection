@@ -5,6 +5,6 @@ import com.app.model.Person;
 
 public class Main {
     public static void main(String[] args) {
-        ReflectionController.INSTANCE.init("{}", Person.class);
+        ReflectionController.INSTANCE.init("{\"name\":\"diego\"}", Person.class);
     }
 }
