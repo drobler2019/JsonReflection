@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Diego",
+    "lastName": "Alejandro",
+    "identificacion": "100444030303"
+  },
+  {
+    "id": 2,
+    "name": "Mateo",
+    "lastName": "Salamanca"
+  },
+  {
+    "id": 3,
+    "name": "Osvaldo",
+    "lastName": "Cueva"
+  },
+  {
+    "id": 4,
+    "name": "Fernando",
+    "lastName": "Osorio"
+  }
+]
