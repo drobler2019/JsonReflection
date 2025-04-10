@@ -2,13 +2,16 @@
   {
     "id": 1,
     "name": "Diego",
-    "lastName": "Alejandro",
-    "identificacion": "100444030303"
+    "lastName": "Alejandro"
   },
   {
     "id": 2,
     "name": "Mateo",
-    "lastName": "Salamanca"
+    "lastName": "Salamanca",
+    "status": {
+      "id": 1,
+      "name": "DISABLED"
+    }
   },
   {
     "id": 3,

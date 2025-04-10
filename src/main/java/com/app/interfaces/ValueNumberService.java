@@ -1,5 +1,5 @@
 package com.app.interfaces;
 
-public interface ValueNumberInterface<E extends Number> {
+public interface ValueNumberService<E extends Number> {
     E getNumericValue(String value);
 }

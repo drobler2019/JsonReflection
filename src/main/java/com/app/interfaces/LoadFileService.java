@@ -1,5 +1,5 @@
 package com.app.interfaces;
 
-public interface LoadResourceInterface {
+public interface LoadFileService {
     String readFile(String path);
 }

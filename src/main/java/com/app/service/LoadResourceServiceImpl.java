@@ -1,12 +1,12 @@
 package com.app.service;
 
-import com.app.interfaces.LoadResourceInterface;
+import com.app.interfaces.LoadFileService;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class LoadResourceImpl implements LoadResourceInterface {
+public class LoadResourceServiceImpl implements LoadFileService {
 
     @Override
     public String readFile(String path) {

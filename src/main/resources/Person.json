@@ -1,0 +1,9 @@
+{
+  "id": 1,
+  "name": "Diego",
+  "lastName": "Alejandro",
+  "status": {
+    "id": 1,
+    "name": "DISABLED"
+  }
+}

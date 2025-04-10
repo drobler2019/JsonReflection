@@ -1,31 +1,31 @@
 package com.app.controller;
 
-import com.app.interfaces.JsonReflectionInterface;
-import com.app.interfaces.LoadResourceInterface;
-import com.app.service.JsonReflectionImpl;
-import com.app.service.LoadResourceImpl;
+import com.app.interfaces.ReflectionInstanceService;
+import com.app.interfaces.LoadFileService;
+import com.app.service.ReflectionInstanceServiceImpl;
+import com.app.service.LoadResourceServiceImpl;
 
 import java.util.List;
 
 public enum ReflectionController {
 
-    INSTANCE(new JsonReflectionImpl());
+    INSTANCE(new ReflectionInstanceServiceImpl());
 
-    private final JsonReflectionInterface jsonReflectionInterface;
+    private final ReflectionInstanceService reflectionInstanceService;
 
-    ReflectionController(JsonReflectionInterface jsonReflectionInterface) {
-        this.jsonReflectionInterface = jsonReflectionInterface;
+    ReflectionController(ReflectionInstanceService reflectionInstanceService) {
+        this.reflectionInstanceService = reflectionInstanceService;
     }
 
     public void init(Class<?> clazz) {
-        LoadResourceInterface loadResourceInterface = new LoadResourceImpl();
-        var json = loadResourceInterface.readFile("src/main/resources/data.json");
+        LoadFileService loadFileService = new LoadResourceServiceImpl();
+        var json = loadFileService.readFile("src/main/resources/data.json");
         if (clazz.isArray()) {
-            List<?> objects = jsonReflectionInterface.jsonToList(json, clazz);
+            List<?> objects = reflectionInstanceService.jsonToList(json, clazz);
             objects.forEach(System.out::println);
             return;
         }
-        var object = jsonReflectionInterface.jsonToObject(json, clazz);
+        var object = reflectionInstanceService.jsonToObject(json, clazz);
         System.out.println(object);
     }
 }
