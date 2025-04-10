@@ -32,9 +32,11 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
         String[] peers = content.split(",");
         List<String> peersList = new ArrayList<>(List.of(peers));
         for (int i = 0; i < peers.length; i++) {
-            if (peers[i].contains("{")) {
+            String peer = peers[i].substring(peers[i].indexOf(":") + 1).trim();
+            if (peer.startsWith("{")) {
                 var builder = new StringBuilder();
-                for (int j = i; j < peersList.size(); j++) {
+                int j = i;
+                while(j < peersList.size()) {
                     if (!peers[j].endsWith("}")) {
                         builder.append(peers[j]).append(",");
                     } else {
@@ -46,8 +48,9 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
                         peers = peersList.toArray(String[]::new);
                         break;
                     }
+                    j++;
                 }
-            } else if (peers[i].contains("[")) {
+            } else if (peer.startsWith("[")) {
                 var builder = new StringBuilder();
                 for (int j = i; j < peersList.size(); j++) {
                     if (!peers[j].endsWith("]")) {
