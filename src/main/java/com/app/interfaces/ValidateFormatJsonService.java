@@ -9,4 +9,6 @@ public interface ValidateFormatJsonService {
 
     List<Map<String, String>> getListMap(String json);
 
+    List<String> getArrayJsonToList(String json);
+
 }

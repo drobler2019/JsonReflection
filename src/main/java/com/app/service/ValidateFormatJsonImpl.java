@@ -21,6 +21,11 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
         return getArrayJsonToMap(json);
     }
 
+    @Override
+    public List<String> getArrayJsonToList(String json) {
+        return new ArrayList<>(List.of(json.substring(1, json.length() - 1).split(",")));
+    }
+
     private HashMap<String, String> getJsonStringToMap(String json) {
         String content = json.substring(1, json.length() - 1);
         String[] peers = content.split(",");

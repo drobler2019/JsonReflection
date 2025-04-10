@@ -44,9 +44,15 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> List<T> jsonToList(String json, Class<T> clazz) {
         if (!clazz.isArray()) {
             throw new IllegalArgumentException("El tipo de clase debe ser un array");
+        }
+        if (!json.contains("{")) {
+            return (List<T>) validateFormatJsonService.getArrayJsonToList(json).stream()
+                    .map(o -> typesServiceImpl.convertValue(clazz.getComponentType(), o))
+                    .collect(Collectors.toList());
         }
         var mapList = validateFormatJsonService.getListMap(json);
         var response = new ArrayList<T>();
