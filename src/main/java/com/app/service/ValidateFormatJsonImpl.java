@@ -12,12 +12,13 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
 
     @Override
     public Map<String, String> getMap(String json) {
-        jsonValidate(json);
+        jsonValidate(json, "{", "}");
         return getJsonStringToMap(json);
     }
 
     @Override
     public List<Map<String, String>> getListMap(String json) {
+        jsonValidate(json, "[", "]");
         return getArrayJsonToMap(json);
     }
 
@@ -81,7 +82,8 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
             }
             long count = Stream.of(jsonValue.split("")).filter(s -> s.equals("{")).count();
             if (count > 1) {
-                stringBuilder.append("}").append("}");
+                for (int i = 0; i < count; i++)
+                    stringBuilder.append("}");
             } else {
                 stringBuilder.append("}");
             }
@@ -108,10 +110,10 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
         return map;
     }
 
-    private void jsonValidate(String json) {
+    private void jsonValidate(String json, String open, String close) {
         nullOrEmpty(json);
-        if (!(json.startsWith("{") && json.endsWith("}"))) {
-            throw new IllegalArgumentException("El JSON debe empezar con '{' y terminar con '}'");
+        if (!(json.startsWith(open) && json.endsWith(close))) {
+            throw new IllegalArgumentException("El JSON debe empezar con '" + open + "' y terminar con '" + close + "'");
         }
     }
 
