@@ -44,7 +44,7 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
                     }
                     if (peers[j].endsWith("}")) {
                         peersList.subList(i, j + 1).clear();
-                        peersList.add(builder.toString());
+                        peersList.addFirst(builder.toString());
                         peers = peersList.toArray(String[]::new);
                         break;
                     }
