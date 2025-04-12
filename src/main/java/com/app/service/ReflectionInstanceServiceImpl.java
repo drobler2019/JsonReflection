@@ -3,6 +3,7 @@ package com.app.service;
 import com.app.interfaces.ReflectionInstanceService;
 import com.app.interfaces.ValidateFormatJsonService;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -75,38 +76,43 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
             String fieldName = field.getName();
             if (map.containsKey(fieldName)) {
                 try {
+                    submap = map;
                     Object value = typesServiceImpl.convertValue(field.getType(), map.get(fieldName));
-                    setObject(value);
+                    setObject(value,field);
                     field.set(instance, value);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e.getMessage());
                 }
             }
         }
+        map.clear();
+        submap.clear();
         return instance;
     }
 
     @SuppressWarnings("unchecked")
-    private <T> void setObject(Object object) throws IllegalAccessException {
+    private <T> void setObject(Object object, Field field) throws IllegalAccessException {
         if (typesServiceImpl.isPresent(object.getClass())) {
             return;
         }
         T subInstance = (T) object;
         var fields = subInstance.getClass().getDeclaredFields();
-        var className = subInstance.getClass().getSimpleName().toLowerCase();
-        String json = map.get(className);
-        if (json != null) {
+
+        if (!typesServiceImpl.isPresent(field.getType())) {
+            String json = submap.get(field.getName());
             submap = validateFormatJsonService.getMap(json);
         }
-        for (Field field : fields) {
-            field.setAccessible(true);
-            if (submap.containsKey(field.getName())) {
-                var objectValue = typesServiceImpl.convertValue(field.getType(), submap.get(field.getName()));
-                if (!typesServiceImpl.isPresent(objectValue.getClass())) {
-                    submap = validateFormatJsonService.getMap(submap.get(objectValue.getClass().getSimpleName().toLowerCase()));
-                }
-                setObject(objectValue);
-                field.set(subInstance, objectValue);
+        for (Field subField : fields) {
+            subField.setAccessible(true);
+            if (submap.containsKey(subField.getName())) {
+                var objectValue = typesServiceImpl.convertValue(subField.getType(), submap.get(subField.getName()));
+                setObject(objectValue,subField);
+                subField.set(subInstance, objectValue);
+            } else {
+                submap = validateFormatJsonService.getMap(map.get(field.getName()));
+                var objectValue = typesServiceImpl.convertValue(subField.getType(), submap.get(subField.getName()));
+                setObject(objectValue,subField);
+                subField.set(subInstance, objectValue);
             }
         }
     }

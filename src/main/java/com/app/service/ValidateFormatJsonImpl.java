@@ -3,6 +3,7 @@ package com.app.service;
 import com.app.interfaces.ValidateFormatJsonService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,14 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
                         builder.append(peers[j]);
                     }
                     if (peers[j].endsWith("}")) {
+                        String result = builder.toString();
+                        long keysOpen =  Arrays.stream(result.split("")).filter(r -> r.equals("{")).count();
+                        long keysClose =  Arrays.stream(result.split("")).filter(r -> r.equals("}")).count();
+                        if (keysOpen != keysClose) {
+                            builder.append(",");
+                            j++;
+                            continue;
+                        }
                         peersList.subList(i, j + 1).clear();
                         peersList.addFirst(builder.toString());
                         peers = peersList.toArray(String[]::new);

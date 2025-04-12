@@ -19,7 +19,7 @@ public enum ReflectionController {
 
     public void init(Class<?> clazz) {
         LoadFileService loadFileService = new LoadResourceServiceImpl();
-        var json = loadFileService.readFile("src/main/resources/arrays.json");
+        var json = loadFileService.readFile("src/main/resources/person.json");
         if (clazz.isArray()) {
             List<?> objects = reflectionInstanceService.jsonToList(json, clazz);
             objects.forEach(System.out::println);
