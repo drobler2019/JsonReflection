@@ -1,10 +1,9 @@
 package com.app.model;
 
-public class Status {
-    private long id;
-    private String name;
+public class Status extends SuperClass {
 
-    public Status() {}
+    public Status() {
+    }
 
     @Override
     public String toString() {

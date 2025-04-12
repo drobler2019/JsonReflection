@@ -3,7 +3,6 @@ package com.app.service;
 import com.app.interfaces.ReflectionInstanceService;
 import com.app.interfaces.ValidateFormatJsonService;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -45,15 +44,12 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> List<T> jsonToList(String json, Class<T> clazz) {
         if (!clazz.isArray()) {
             throw new IllegalArgumentException("El tipo de clase debe ser un array");
         }
         if (!json.contains("{")) {
-            return (List<T>) validateFormatJsonService.getArrayJsonToList(json).stream()
-                    .map(o -> typesServiceImpl.convertValue(clazz.getComponentType(), o))
-                    .collect(Collectors.toList());
+            return getCollect(json, clazz);
         }
         var mapList = validateFormatJsonService.getListMap(json);
         var response = new ArrayList<T>();
@@ -62,6 +58,13 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
             response.add(jsonToObject(getInstanceOfClass(clazz.getComponentType())));
         }
         return response;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> List<T> getCollect(String json, Class<T> clazz) {
+        return (List<T>) validateFormatJsonService.getArrayJsonToList(json).stream()
+                .map(o -> typesServiceImpl.convertValue(clazz.getComponentType(), o))
+                .toList();
     }
 
     private <T> T jsonToObject(T instance) {
@@ -78,7 +81,7 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
                 try {
                     submap = map;
                     Object value = typesServiceImpl.convertValue(field.getType(), map.get(fieldName));
-                    setObject(value,field);
+                    setObject(value, field);
                     field.set(instance, value);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e.getMessage());
@@ -106,12 +109,12 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
             subField.setAccessible(true);
             if (submap.containsKey(subField.getName())) {
                 var objectValue = typesServiceImpl.convertValue(subField.getType(), submap.get(subField.getName()));
-                setObject(objectValue,subField);
+                setObject(objectValue, subField);
                 subField.set(subInstance, objectValue);
             } else {
                 submap = validateFormatJsonService.getMap(map.get(field.getName()));
                 var objectValue = typesServiceImpl.convertValue(subField.getType(), submap.get(subField.getName()));
-                setObject(objectValue,subField);
+                setObject(objectValue, subField);
                 subField.set(subInstance, objectValue);
             }
         }

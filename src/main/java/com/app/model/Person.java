@@ -1,14 +1,13 @@
 package com.app.model;
 
-public class Person {
+public class Person extends SuperClass {
 
-    private long id;
-    private String name;
     private String lastName;
     private Item item;
     private Product product;
 
-    public Person() {}
+    public Person() {
+    }
 
     @Override
     public String toString() {
