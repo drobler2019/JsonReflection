@@ -38,12 +38,18 @@ class ValidateFormatJsonImplTest {
         assertAll(() -> assertEquals(value, mapResult.get(key)),
                 () -> assertNotEquals(value, otherResult.get(key)),
                 () -> assertEquals(values, subjects),
-                () -> assertEquals(object,status));
+                () -> assertEquals(object, status));
     }
 
     @Test
-    public void getMapExceptionTest() {
-        String json = "}";
-        assertThrows(IllegalArgumentException.class, () -> validateFormatJsonService.getMap(json));
+    void getListMapTest() {
+        String object = "{\"id\":1,\"name\":\"Diego\",\"lastName\":\"Alejandro\"}";
+        var objects = validateFormatJsonService.getMap(object);
+        var array = validateFormatJsonService.getListMap("[" + object + "," + object + "]");
+        Map<String, String> o = array.getFirst();
+        assertAll(() -> assertEquals(objects, o), () -> assertThrows(IllegalArgumentException.class,
+                        () -> validateFormatJsonService.getListMap("[")),
+                () -> assertThrows(IllegalArgumentException.class, () -> validateFormatJsonService.getMap("}")));
     }
+
 }
