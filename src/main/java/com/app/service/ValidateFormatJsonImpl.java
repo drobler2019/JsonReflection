@@ -25,11 +25,17 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
 
     @Override
     public List<String> getArrayJsonToList(String json) {
+        jsonValidate(json, "[", "]");
         return new ArrayList<>(List.of(json.substring(1, json.length() - 1).split(",")));
     }
 
     private HashMap<String, String> getJsonStringToMap(String json) {
         String content = json.substring(1, json.length() - 1);
+        if(content.isEmpty()) {
+            var hashMap = new HashMap<String, String>();
+            hashMap.put("empty","{}");
+            return hashMap;
+        }
         String[] peers = content.split(",");
         List<String> peersList = new ArrayList<>(List.of(peers));
         for (int i = 0; i < peers.length; i++) {
@@ -81,9 +87,10 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
 
     private List<Map<String, String>> getArrayJsonToMap(String json) {
         var content = json.substring(1, json.length() - 1);
+        var maps = new ArrayList<Map<String, String>>();
+        //todo: compatiblidad con arreglos literales aninados en objetos y arreglos con objetos anidados
         var jsonValues = content.split("}");
         var stringBuilder = new StringBuilder();
-        var maps = new ArrayList<Map<String, String>>();
         for (String jsonValue : jsonValues) {
             if (jsonValue.isEmpty()) {
                 continue;

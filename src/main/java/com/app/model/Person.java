@@ -3,8 +3,7 @@ package com.app.model;
 public class Person extends SuperClass {
 
     private String lastName;
-    private Item item;
-    private Product product;
+    private Status status;
 
     public Person() {
     }
@@ -15,8 +14,7 @@ public class Person extends SuperClass {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", item=" + item +
-                ", product=" + product +
+                ", status='" + status + '\'' +
                 '}';
     }
 }

@@ -2,19 +2,8 @@
   "id": 1,
   "name": "Diego",
   "lastName": "Alejandro",
-  "item" : {
-    "id": 20,
-    "status" : {
-      "id": 30,
-      "name" : "ENABLED"
-    },
-    "product": {
-      "id": 40,
-      "name": "Samsung Galaxy s25 Ultra"
-    }
-  },
-  "product": {
-    "id" : 50,
-    "name": "TV Samsung"
+  "status" : {
+    "id": 30,
+    "name" : "ENABLED"
   }
 }

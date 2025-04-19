@@ -39,7 +39,7 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
     public <T> T jsonToObject(String json, Class<T> clazz) {
         map = validateFormatJsonService.getMap(json);
         T instance = getInstanceOfClass(clazz);
-        return jsonToObject(instance);
+        return map.containsKey("empty") ? instance : jsonToObject(instance);
     }
 
     @Override
