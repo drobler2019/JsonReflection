@@ -2,11 +2,7 @@ package com.app.service;
 
 import com.app.interfaces.ValidateFormatJsonService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
@@ -88,8 +84,13 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
     private List<Map<String, String>> getArrayJsonToMap(String json) {
         var content = json.substring(1, json.length() - 1);
         var maps = new ArrayList<Map<String, String>>();
-        //todo: compatiblidad con arreglos literales aninados en objetos y arreglos con objetos anidados
         var jsonValues = content.split("}");
+        var mapList = this.getMapWithSubMap(content);
+
+        if (!mapList.isEmpty()) {
+            return mapList;
+        }
+
         var stringBuilder = new StringBuilder();
         for (String jsonValue : jsonValues) {
             if (jsonValue.isEmpty()) {
@@ -111,6 +112,24 @@ public class ValidateFormatJsonImpl implements ValidateFormatJsonService {
             stringBuilder.delete(0, stringBuilder.length());
         }
         return maps;
+    }
+
+    private List<Map<String, String>> getMapWithSubMap(String json) {
+        if((json.contains("[") || json.contains("]")) && json.startsWith("{") && json.endsWith("}")) {
+            var split = json.split(",\\{");
+            return Stream.of(split).map(j -> {
+                var builder = new StringBuilder();
+                if(!j.startsWith("{")) {
+                    builder.append("{").append(j);
+                }
+                if(!j.endsWith("}")) {
+                    builder.append(j).append("}");
+                }
+                String result = builder.toString();
+                return result.isEmpty() ? j : result;
+            }).map(this::getMap).toList();
+        }
+        return Collections.emptyList();
     }
 
     private HashMap<String, String> getJsonStringToMap(String[] peers) {

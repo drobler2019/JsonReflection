@@ -5,6 +5,7 @@ import com.app.interfaces.ValidateFormatJsonService;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
@@ -18,6 +19,8 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
     private final TypesServiceImpl typesServiceImpl;
     private Map<String, String> map = null;
     private Map<String, String> submap = null;
+    private Map<String, String> submap3 = null;
+    private boolean isArray = false;
 
     public ReflectionInstanceServiceImpl() {
         validateFormatJsonService = new ValidateFormatJsonImpl();
@@ -67,15 +70,28 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
     }
 
     private <T> T jsonToObject(T instance) {
-        var fields = getFields(instance.getClass());
         Class<?> superclass = instance.getClass().getSuperclass();
+        var fields = new ArrayList<Field>();
         setFieldInherit(superclass, fields);
+        fields.addAll(getFields(instance.getClass()));
         for (Field field : fields) {
             field.setAccessible(true);
             String fieldName = field.getName();
             if (map.containsKey(fieldName)) {
                 try {
-                    submap = map;
+                    if (List.class.isAssignableFrom(field.getType())) {
+                        this.isArray = true;
+                        var type = field.getGenericType();
+                        if (type instanceof ParameterizedType parameterizedType) {
+                            setList(instance, field, parameterizedType, fieldName);
+                            map = submap;
+                            this.isArray = false;
+                            continue;
+                        }
+                    }
+                    if (!isArray) {
+                        submap = map;
+                    }
                     Object value = typesServiceImpl.convertValue(field.getType(), map.get(fieldName));
                     setObject(value, field);
                     field.set(instance, value);
@@ -84,9 +100,22 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
                 }
             }
         }
-        map.clear();
-        submap.clear();
+        if(!isArray) {
+            map.clear();
+            submap.clear();
+        }
         return instance;
+    }
+
+    private <T> void setList(T instance, Field field, ParameterizedType parameterizedType, String fieldName) throws IllegalAccessException {
+        var clazz = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+        var mapList = validateFormatJsonService.getListMap(map.get(fieldName));
+        List<?> list = new ArrayList<>();
+        for (Map<String, String> map : mapList) {
+            this.map = map;
+            list.add(jsonToObject(getInstanceOfClass(clazz)));
+        }
+        field.set(instance, list);
     }
 
     @SuppressWarnings("unchecked")
@@ -95,21 +124,23 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
             return;
         }
         T subInstance = (T) object;
-        var fields = getFields(subInstance.getClass());
-
+        var fields = new ArrayList<Field>();
         Class<?> superclass = subInstance.getClass().getSuperclass();
         setFieldInherit(superclass, fields);
-
+        fields.addAll(getFields(subInstance.getClass()));
         if (!typesServiceImpl.isPresent(field.getType())) {
             String json = submap.get(field.getName());
-            submap = validateFormatJsonService.getMap(json);
+            if (json == null) {
+                json = map.get(field.getName());
+            }
+            submap3 = validateFormatJsonService.getMap(json);
         }
         for (Field subField : fields) {
             subField.setAccessible(true);
-            if (submap.containsKey(subField.getName())) {
+            if (submap3.containsKey(subField.getName())) {
                 set(subField, subInstance);
             } else {
-                submap = validateFormatJsonService.getMap(map.get(field.getName()));
+                submap3 = validateFormatJsonService.getMap(map.get(field.getName()));
                 set(subField, subInstance);
             }
         }
@@ -123,7 +154,7 @@ public class ReflectionInstanceServiceImpl implements ReflectionInstanceService 
     }
 
     private <T> void set(Field subField, T subInstance) throws IllegalAccessException {
-        var objectValue = typesServiceImpl.convertValue(subField.getType(), submap.get(subField.getName()));
+        var objectValue = typesServiceImpl.convertValue(subField.getType(), submap3.get(subField.getName()));
         setObject(objectValue, subField);
         subField.set(subInstance, objectValue);
     }

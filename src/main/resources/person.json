@@ -1,9 +1,31 @@
 {
+  "statuses": [
+    {
+      "id": 30,
+      "name": "ENABLED"
+    },
+    {
+      "id": 31,
+      "name": "DISABLED"
+    }
+  ],
   "id": 1,
   "name": "Diego",
-  "lastName": "Alejandro",
-  "status" : {
-    "id": 30,
-    "name" : "ENABLED"
-  }
+  "subjects": [
+    {
+      "id": 32,
+      "name": "Matemáticas",
+      "statuses": [
+        {
+          "id": 40,
+          "name": "ENABLED"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "name": "Sociales"
+    }
+  ],
+  "lastName": "Alejandro"
 }
